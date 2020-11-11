@@ -1,17 +1,22 @@
 require([
-    "esri/Map",
+    "esri/WebMap",
     "esri/views/MapView",
+    "esri/layers/FeatureLayer",
     "esri/layers/GeoJSONLayer",
     "esri/widgets/FeatureTable",
     "esri/widgets/Expand",
     "esri/widgets/LayerList",
     "esri/core/watchUtils"
-], function (Map, MapView, GeoJSONLayer, FeatureTable, Expand, LayerList, watchUtils) {
+], function (WebMap, MapView, FeatureLayer, GeoJSONLayer, FeatureTable, Expand, LayerList, watchUtils) {
     let selectedFeature,
         id;
     const features = [];
 
-    const map = new Map({basemap: "gray-vector"});
+    const map = new WebMap({
+        portalItem: {
+            id: "3582b744bba84668b52a16b0b6942544"
+        }
+    });
 
     const view = new MapView({
         map: map,
@@ -31,17 +36,58 @@ require([
 
     // When view is ready, find feature layer and set title and outFields
     view.when(function () { 
-        
-        // SCHOOL LAYER
+        // SCHOOL POINTS LAYER
+        const schoolPointsRenderer = {
+            type: "simple",
+            symbol: {
+                type: "simple-marker",
+                outline: {
+                    width: 1.25,
+                    color: [247, 247, 247, 1]
+                },
+                size: 8,
+                color: [153, 0, 0, 1]
+            }
+          }
+
+        const schoolPointsLabel = {
+            symbol: {
+              type: "text",
+              color: "#4C1213",
+              haloColor: "#f7f7f7",
+              haloSize: 2,
+              font: {
+                 family: "serif",
+                 size: 10
+               }
+            },
+            labelPlacement: "above-center",
+            labelExpressionInfo: {
+              expression: "$feature.namelong"
+            },
+            maxScale: 0,
+            minScale: 62500
+          }
+
+        const schoolPointsLayer = new GeoJSONLayer({
+            url: './playground_schools.geojson',
+            renderer: schoolPointsRenderer,
+            labelingInfo: [schoolPointsLabel],
+            labelsVisible: true
+        })
+        schoolPointsLayer.title = "WCPSS Schools with a Playground"
+
+        // SCHOOL SERVICE AREAS LAYER
 
         const schoolRenderer = {
             type: "simple",
             symbol: {
                 type: "simple-fill",
                 outline: {
-                    width: 0
+                    width: 0.25,
+                    color: "#191919"
                 },
-                color: [253, 216, 53, 0.5]
+                color: [153, 0, 0, 0.65]
             }
         }
 
@@ -68,7 +114,7 @@ require([
                     ]
                 }
             ]
-        }
+        }   
 
         const schoolLayer = new GeoJSONLayer(
             {
@@ -79,8 +125,6 @@ require([
         )
         schoolLayer.title = "Portions of 10 Minute Walk Service Area of WCPSS Schoools with Playgrounds not Served by a Public Park Playground";
         schoolLayer.outFields = ["*"];
-
-        map.add(schoolLayer)
 
         // Get references to div elements for toggling table visibility
         const appContainer = document.getElementById("appContainer");
@@ -98,7 +142,7 @@ require([
                     direction: "asc"
                 }, {
                     name: "population",
-                    label: "Addtional Raleigh Population Served",
+                    label: "Addtional Raleigh Population Served within a 10 Minute Walk of a Playground",
                     format: {
                         digitSeparator: true
                     }
@@ -120,9 +164,10 @@ require([
             symbol: {
                 type: "simple-fill",
                 outline: {
-                    width: 0
+                    width: 0.25,
+                    color: "#191919"
                 },
-                color: [128, 203, 196, 0.5]
+                color: [241, 190, 72, 0.5]
             }
         }
 
@@ -133,7 +178,7 @@ require([
                 fieldInfos: [
                     {
                         fieldName: "population",
-                        label: "Raleigh Population Served",
+                        label: "Raleigh Population within a 10 Minute Walk of a Public Park Playground ",
                         format: {
                             digitSeparator: true
                         }
@@ -149,11 +194,56 @@ require([
         })
         parkSALayer.title = "Areas within a 10 Minute Walk of a Park with a Playground"
 
+        // LAND ACQUISITION ANALYSIS
+
+        const lapRenderer = {
+            type: "simple",
+            symbol: {
+                type: "simple-fill",
+                outline: {
+                    width: 0
+                }
+            },
+            visualVariables: [
+                {
+                    type: "color",
+                    field: "lap_score",
+                    stops: [
+                        {
+                            value: 100.0,
+                            color: "#d73027",
+                            label: "High Priority"
+                        },
+                        {
+                            value: 50.0,
+                            color: "#ffffbf"
+                        },
+                        {
+                            value: 0.0,
+                            color: "#4575b4",
+                            label: "Low Priority"
+                        }
+                    ]
+                }
+            ]
+        }
+
+        const lapLayer = new FeatureLayer({
+            portalItem: {
+                id:"9f4a52777d9948b38f25f1411dc58ed4"
+            },
+            renderer: lapRenderer,
+            visible: false,
+            outFields: ['lap_score']
+        })
+
+        // ADD LAYERS TO MAP
+        map.add(lapLayer)
         map.add(parkSALayer)
+        map.add(schoolLayer)
+        map.add(schoolPointsLayer)
 
         // LAYER LIST
-
-        
         const layerList = new LayerList({
             view: view,
             listItemCreatedFunction: function(event) {
