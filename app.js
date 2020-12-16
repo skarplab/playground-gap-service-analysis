@@ -228,16 +228,103 @@ require([
             ]
         }
 
+        const lapPopupTemplate = {
+            title: "Land Acquisition Prioritization, Census Block {geoid10}",
+            content: [
+                {
+                    type: "fields",
+                    fieldInfos: [
+                        {
+                            fieldName: "lap_score",
+                            label: "Score",
+                            format: {
+                                places: 2
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+
         const lapLayer = new FeatureLayer({
             portalItem: {
                 id:"9f4a52777d9948b38f25f1411dc58ed4"
             },
+            title: 'Land Acquisition Prioritization',
             renderer: lapRenderer,
             visible: false,
-            outFields: ['lap_score']
+            outFields: ['geoid10', 'lap_score'],
+            popupTemplate: lapPopupTemplate
+        })
+
+        // SOCIAL EQUITY ANALYSIS
+        const socialEquityRenderer = {
+            type: "simple",
+            symbol: {
+                type: "simple-fill",
+                outline: {
+                    width: 0
+                }
+            },
+            visualVariables: [
+                {
+                    type: "color",
+                    field: "social_equity_score",
+                    stops: [
+                        {
+                            value: 90.0,
+                            color: "#4e6605",
+                            label: "High Priority"
+                        },
+                        {
+                            value: 65.0,
+                            color: "#7c9e14"
+                        },
+                        {
+                            value: 40.0,
+                            color: "#d9d7d6"
+                        },
+                        {
+                            value: 0.0,
+                            color: "#e6e4e1",
+                            label: "Low Priority"
+                        }
+                    ]
+                }
+            ]
+        }
+
+        const socialEquityPopupTemplate = {
+            title: "Social Equity Priority, Census Block {geoid10}",
+            content: [
+                {
+                    type: "fields",
+                    fieldInfos: [
+                        {
+                            fieldName: "social_equity_score",
+                            label: "Score",
+                            format: {
+                                places: 2
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+
+        const socialEquityLayer = new FeatureLayer({
+            portalItem: {
+                id:"9f4a52777d9948b38f25f1411dc58ed4"
+            },
+            title: 'Social Equity Priority',
+            renderer: socialEquityRenderer,
+            visible: false,
+            outFields: ['geoid10','social_equity_score'],
+            popupTemplate: socialEquityPopupTemplate
         })
 
         // ADD LAYERS TO MAP
+        map.add(socialEquityLayer)
         map.add(lapLayer)
         map.add(parkSALayer)
         map.add(schoolLayer)
