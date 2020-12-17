@@ -254,7 +254,8 @@ require([
             renderer: lapRenderer,
             visible: false,
             outFields: ['geoid10', 'lap_score'],
-            popupTemplate: lapPopupTemplate
+            popupTemplate: lapPopupTemplate,
+            definitionExpression: "etj=1"
         })
 
         // SOCIAL EQUITY ANALYSIS
@@ -320,7 +321,8 @@ require([
             renderer: socialEquityRenderer,
             visible: false,
             outFields: ['geoid10','social_equity_score'],
-            popupTemplate: socialEquityPopupTemplate
+            popupTemplate: socialEquityPopupTemplate,
+            definitionExpression: "etj=1"
         })
 
         // ADD LAYERS TO MAP
