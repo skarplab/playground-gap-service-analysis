@@ -111,6 +111,28 @@ require([
                                 places: 2
                             }
                         }
+                        ,
+                        {
+                            fieldName: 'weighted_mean_lap_score',
+                            label: "Mean Land Acquisition Priority of Service Area (Population Weighted)",
+                            format: {
+                                places: 2
+                            }
+                        },
+                        {
+                            fieldName: 'mean_social_equity_score',
+                            label: "Mean Social Equity of Service Area",
+                            format: {
+                                places: 2
+                            }
+                        },
+                        {
+                            fieldName: 'weighted_mean_social_equity_score',
+                            label: "Mean Social Equity of Service Area (Population Weighted)",
+                            format: {
+                                places: 2
+                            }
+                        }
                     ]
                 }
             ]
@@ -142,13 +164,31 @@ require([
                     direction: "asc"
                 }, {
                     name: "population",
-                    label: "Addtional Raleigh Population Served within a 10 Minute Walk of a Playground",
+                    label: "Additional Raleigh Population Served within a 10 Minute Walk of a Playground",
                     format: {
                         digitSeparator: true
                     }
                 }, {
                     name: "mean_lap_score",
-                    label: "Average Land Acquisition Priority",
+                    label: "Land Acquisition Priority",
+                    format: {
+                        places: 2
+                    }
+                }, {
+                    name: "weighted_mean_lap_score",
+                    label: "Population Weighted Land Acquisition Priority",
+                    format: {
+                        places: 2
+                    }
+                }, {
+                    name: "mean_social_equity_score",
+                    label: "Social Equity Score",
+                    format: {
+                        places: 2
+                    }
+                }, {
+                    name: "weighted_mean_social_equity_score",
+                    label: "Population Weighted Social Equity Score",
                     format: {
                         places: 2
                     }
