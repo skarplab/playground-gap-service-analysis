@@ -6,8 +6,9 @@ require([
     "esri/widgets/FeatureTable",
     "esri/widgets/Expand",
     "esri/widgets/LayerList",
+    "esri/widgets/BasemapGallery",
     "esri/core/watchUtils"
-], function (WebMap, MapView, FeatureLayer, GeoJSONLayer, FeatureTable, Expand, LayerList, watchUtils) {
+], function (WebMap, MapView, FeatureLayer, GeoJSONLayer, FeatureTable, Expand, LayerList, BasemapGallery, watchUtils) {
     let selectedFeature,
         id;
     const features = [];
@@ -394,9 +395,21 @@ require([
 
         view.ui.add(llExpand, "bottom-right")
 
+        const basemapGallery = new BasemapGallery({
+            view: view
+        })
+
+        const bgExpand = new Expand({
+            content: basemapGallery
+        })
+
+        view.ui.add(bgExpand, {
+            position: "bottom-right"
+        })
+
 
         // Add toggle visibility slider
-        view.ui.add(document.getElementById("mainDiv"), "top-right");
+        view.ui.add(document.getElementById("mainDiv"), "bottom-left");
 
         // Get reference to div elements
         const checkboxEle = document.getElementById("checkboxId");
